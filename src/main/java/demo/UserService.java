@@ -7,6 +7,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    User jhon = new User("Jhon",24,"test@gmail.com","password");
+    User maitë = new User("Maitë",16,"test1@gmail.com","password");
+    User jack = new User("Jack",25,"test2@gmail.com","password");
+    
+    
+    //jhon.addMembershipYear("1999");
 
     private List<User> userRepository = new ArrayList<>();
 
@@ -14,6 +20,13 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
+        addUser(jack);
+        addUser(maitë);
+        addUser(jhon);
+
+        jack.addMembershipYear(1999);
+        jhon.addMembershipYear(2000);
+        maitë.addMembershipYear(2010);
         return userRepository;
     }
 
@@ -84,5 +97,13 @@ public class UserService {
         return users;
     }
 
+    public User getUserWithAge(int age){
+        for (int i = 0; userRepository.size() > i; i++){
+            if (userRepository.get(i).getAge() == age){
+                return userRepository.get(i);
+            }
+        }
+        return null;
+    }
     
 }

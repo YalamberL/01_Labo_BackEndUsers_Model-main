@@ -17,6 +17,12 @@ public class User {
 
     }
 
+    public User(String name, int age){
+        this.name = name;
+        if (age >= 0)
+            this.age = age;
+    }
+
     public User(String name, int age, String email, String password) {
         this.name = name;
         if (age >= 0) 

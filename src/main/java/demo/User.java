@@ -3,11 +3,25 @@ package demo;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "Users_Tbl")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     // private meaning that it can only be used and modified in this class
     private String name;
     private int age;
+
+    @Transient
     private List<Integer> membershipYears = new ArrayList<Integer>();
     private String email;
     private String password;
@@ -29,6 +43,10 @@ public class User {
             this.age = age;
         this.email = email;
         this.password = password;
+    }
+
+    public long getId(){
+        return this.id;
     }
 
     public int countMembershipYearsAfter1999 () {
@@ -106,13 +124,11 @@ public class User {
             }
         }
         return 0;
-
-        // List<Integer> years = new ArrayList<Integer>();
-        // for (int i = 0; membershipYears.size() > i; i++){
-        //     if (getName())
-        //     years.add(membershipYears.get(i));
-        // }
-        // return years;
+    }
+   
+    @Override
+    public boolean equals(Object arg0) {
+        return super.equals(arg0);
     }
 
     @Override

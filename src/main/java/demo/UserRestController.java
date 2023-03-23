@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +29,10 @@ public class UserRestController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/oldest")
-    public User getOldestUser() {
-        return userService.getOldestUser();
-    }
+    // @GetMapping("/oldest")
+    // public User getOldestUser() {
+    //     return userService.getOldestUser();
+    // }
 
     @GetMapping("/search/olderthan")
     public List<User> searchUsersWithAgeOlderThan(@RequestParam("age") int age) {
@@ -52,17 +55,27 @@ public class UserRestController {
     }
 
 
-    @GetMapping("/search")
-    public List<User> searchAllUsersWithEmailAndAge(@RequestParam("email") String email, @RequestParam("age") int age){
-        List<User> foundUsers = new ArrayList<User>();
-        foundUsers.add(userService.getUserWithEmail(email));
-        foundUsers.add(userService.getUserWithAge(age));
+    // @GetMapping("/search")
+    // public List<User> searchAllUsersWithEmailAndAge(@RequestParam("email") String email, @RequestParam("age") int age){
+    //     List<User> foundUsers = new ArrayList<User>();
+    //     foundUsers.add(userService.getUserWithEmail(email));
+    //     foundUsers.add(userService.getUserWithAge(age));
 
-        return foundUsers;
-    }
+    //     return foundUsers;
+    // }
 
     @GetMapping("/search/age/{min}/{max}")
     public List<User> searchUsersBetweenGivenAge(@PathVariable("min") int min, @PathVariable("max") int max){
         return userService.getUsersWithAgeBetween(min, max);
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user){
+        return userService.addUser(user);
+    }
+
+    @DeleteMapping("/{email}")
+    public User deleteUser(@PathVariable("email") String email){
+        return userService.removeUser(email);
     }
 }

@@ -1,7 +1,8 @@
 package demo;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -70,12 +71,17 @@ public class UserRestController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user){
+    public User addUser(@Valid @RequestBody User user){
         return userService.addUser(user);
     }
 
     @DeleteMapping("/{email}")
     public User deleteUser(@PathVariable("email") String email){
         return userService.removeUser(email);
+    }
+
+    @DeleteMapping("/{id}")
+    public User deleteUserById(@PathVariable("id") Long id){
+        return userService.removeUserById(id).get();
     }
 }

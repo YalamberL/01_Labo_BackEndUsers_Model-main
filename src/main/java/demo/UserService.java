@@ -1,7 +1,9 @@
 package demo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,27 +29,23 @@ public class UserService {
     //     return userRepository.findAll().stream().filter(user -> user.getAge()>age).toList();
     // }
 
-    public List<User> getUsersWithAgeOlderThan(int age) {
+    public List<User> getUsersWithAgeOlderThan(int age) throws ServiceException {
+        if (userRepository.findUsersByAgeAfter(age).isEmpty() == true){
+            throw new ServiceException("users", "no users with age " + age + " found");
+        }
         return userRepository.findUsersByAgeAfter(age);
     }
 
-    // public User getOldestUser() {
-    //     User oldest = null;
-    //     if (userRepository.size()>0) {
-    //         oldest = userRepository.get(0);
-    //         for (User user : userRepository) {
-    //             if (user.getAge() > oldest.getAge())
-    //                 oldest = user;
-    //         }
-    //     }
-    //     return oldest;
-    // }
-
-    public User getOldestUser(){
+    public User getOldestUser() throws ServiceException {
+        if (userRepository.findAllByOrderByAgeDesc() == null){
+            throw new ServiceException("users", "no oldest user found");
+        }
         User oldest = null;
-        if (userRepository.findAll().size() > 0){
-            oldest = userRepository.findAll().get(0);
-            for (User user : userRepository.findAll()) {
+        List<User> users = new ArrayList<User>();
+        users.addAll((Collection<? extends User>) userRepository.findAllByOrderByAgeDesc());
+        if (users.size() > 0){
+            oldest = users.get(0);
+            for (User user : users) {
                 if (user.getAge() > oldest.getAge()){
                     oldest = user;
                 }
@@ -60,13 +58,10 @@ public class UserService {
         return userRepository.findAll().stream().filter(user -> user.getName().equals(name)).toList().get(0);
     }
 
-    public User getUserWithEmail(String email){
-        // for (int i = 0; userRepository.size() > i; i++){
-        //     if (userRepository.get(i).getEmail() == email){
-        //         return userRepository.get(i);
-        //     }
-        // }
-        // return null;
+    public User getUserWithEmail(String email) throws ServiceException {
+        if (userRepository.findUserByEmail(email) == null){
+            throw new ServiceException("user", "no user found with email: " + email);
+        }
         return userRepository.findUserByEmail(email);
     }
 
@@ -74,12 +69,18 @@ public class UserService {
         return userRepository.findAll().stream().filter(user -> user.getAge()>min && user.getAge()<max).toList();
     }
 
-    public User addUser(User user) {
+    public User addUser(User user) throws ServiceException {
+        if (userRepository.findUserByEmail(user.getEmail()) != null){
+            throw new ServiceException("email", "email already taken");
+        }
         User userFound = userRepository.save(user);
         return userFound;
     }
 
-    public User removeUser(String email){ 
+    public User removeUser(String email) throws ServiceException{ 
+        if (userRepository.findUserByEmail(email) == null){
+            throw new ServiceException("user", "user with this email does not exist");
+        }
         User foundUser = userRepository.findUserByEmail(email);
         User returnUser = foundUser;
         
@@ -87,6 +88,13 @@ public class UserService {
         // if (e == email){
         //     userRepository.delete(foundUser);
         // }
+        return returnUser;
+    }
+
+    public Optional<User> removeUserById(Long id){
+        Optional<User> foundUser = userRepository.findById(id);
+        Optional<User> returnUser = foundUser;
+        userRepository.delete(foundUser.get());
         return returnUser;
     }
 

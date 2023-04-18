@@ -1,14 +1,18 @@
 package demo;
 
+
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Table(name = "Users_Tbl")
@@ -18,13 +22,36 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     // private meaning that it can only be used and modified in this class
+    @NotBlank(message = "name may not be empty")
     private String name;
+
+    @Positive(message = "age may not be negative")
     private int age;
 
     @Transient
     private List<Integer> membershipYears = new ArrayList<Integer>();
+
+    @Email(message = "no valid email")
     private String email;
+
+    @Pattern(regexp = "(?=\\S+$)(?=.*[a-z]).{8,50}", message = "password must be minimum 8 characters and may not contain white spaces")
+    @Pattern(regexp = "(?=.*[0-9])(?=\\S+$)(?=.*[a-z]).{8,50}", message = "password must contain a digit")
     private String password;
+
+    // //validating password
+    // public static boolean isValidPassword(String password){
+    //     String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$";
+        
+    //     Pattern pattern = Pattern.compile(regex);
+
+    //     if (password == null){
+    //         return false;
+    //     }
+
+    //     Matcher m = pattern.matcher(password);
+
+    //     return m.matches();
+    // }
 
     // 1: This is a constructor
     public User(){
@@ -33,14 +60,12 @@ public class User {
 
     public User(String name, int age){
         this.name = name;
-        if (age >= 0)
-            this.age = age;
+        this.age = age;
     }
 
     public User(String name, int age, String email, String password) {
         this.name = name;
-        if (age >= 0) 
-            this.age = age;
+        this.age = age;
         this.email = email;
         this.password = password;
     }
@@ -111,10 +136,19 @@ public class User {
         return null;
     }
 
+    // public String getPassword(){
+    //     if(this.password.isBlank())
+    //         return "@$-"+"t"+"&%#";
+    //     return "@$-"+ this.password +"&%#";
+    // }
+
     public String getPassword(){
-        if(this.password.isBlank())
-            return "@$-"+"t"+"&%#";
-        return "@$-"+ this.password +"&%#";
+        if (this.password.isBlank()){
+            return "t";
+        }
+            
+        return this.password;
+        
     }
 
     public int getMembershipYears(int year){
